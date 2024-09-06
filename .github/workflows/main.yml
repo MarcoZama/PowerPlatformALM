@@ -1,0 +1,49 @@
+name: extract solution and git it
+on:
+  workflow_dispatch:
+  
+jobs:
+  build:
+    # The type of runner that the job will run on. This needs to be Windows runner.
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Powerplatform GH Actions
+        uses: microsoft/powerplatform-actions/actions-install@v1
+
+      - name: Who Am I
+        uses: microsoft/powerplatform-actions/who-am-i@latest
+        with:
+          app-id: ${{ secrets.CLIENT_ID }}
+          client-secret: ${{ secrets.POWERPLATFORMSPN }}
+          tenant-id: ${{ secrets.TENANT_ID }}
+          environment-url: 'https://org7955f4c1.crm.dynamics.com'
+      
+      - name: Export-solution action
+        uses: microsoft/powerplatform-actions/export-solution@v0
+        with:
+            environment-url: 'https://org7955f4c1.crm.dynamics.com'
+            app-id: ${{secrets.CLIENT_ID}}
+            client-secret: ${{ secrets.PowerPlatformSPN }}
+            tenant-id: ${{secrets.TENANT_ID}}
+            solution-name: 'SampleALM'
+            solution-output-file: 'out/exported/SampleALM_unmanaged.zip'
+            overwrite: true
+            
+      - name: Unpack-solution action
+        uses: microsoft/powerplatform-actions/unpack-solution@v0
+        with:
+          solution-file: 'out/exported/SampleALM_unmanaged.zip'
+          solution-folder: out/solutions/SampleALM
+          solution-type: 'Unmanaged'
+          overwrite-files: true
+
+      - name: branch-solution, prepare it for a PullRequest
+        uses: microsoft/powerplatform-actions/branch-solution@v0
+        with:
+          solution-folder: out/solutions/SampleALM
+          solution-target-folder: solutions/SampleALM
+          repo-token: ${{ secrets.TOKEN }}
+          allow-empty-commit: true
+                
+
+
