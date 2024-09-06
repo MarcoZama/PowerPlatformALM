@@ -1,4 +1,4 @@
-name: extract solution and git it
+name: ALM with Github Actions
 on:
   workflow_dispatch:
   
