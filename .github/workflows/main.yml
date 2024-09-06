@@ -1,4 +1,4 @@
-name: ALM with Github Actions
+name: extract solution and git it
 on:
   workflow_dispatch:
   
@@ -7,7 +7,9 @@ jobs:
     # The type of runner that the job will run on. This needs to be Windows runner.
     runs-on: ubuntu-latest
     steps:
-      - name: Install Powerplatform GH Actions
+      - uses: actions/checkout@v4
+
+      - name: powerplatform-actions
         uses: microsoft/powerplatform-actions/actions-install@v1
 
       - name: Who Am I
@@ -29,7 +31,7 @@ jobs:
             solution-output-file: 'out/exported/SampleALM_unmanaged.zip'
             overwrite: true
             
-      - name: Unpack-solution action
+      - name: unpack-solution action
         uses: microsoft/powerplatform-actions/unpack-solution@v0
         with:
           solution-file: 'out/exported/SampleALM_unmanaged.zip'
@@ -44,6 +46,3 @@ jobs:
           solution-target-folder: solutions/SampleALM
           repo-token: ${{ secrets.TOKEN }}
           allow-empty-commit: true
-                
-
-
